@@ -1,0 +1,18 @@
+{
+  "name": "flatfile-changelog",
+  "version": "1.0.0",
+  "description": "Keep track of every change in the Flatfile Platform",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  }
+}
