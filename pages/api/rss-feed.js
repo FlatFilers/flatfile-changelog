@@ -27,8 +27,8 @@ function simpleMarkdownToHtml(markdown) {
     // Remove commit number patterns
     .replace(/\b[0-9a-f]{7}:\s/gim, "")
     // Headers, blockquotes, and other formatting
-    .replace(/^## (.*$)/gim, "hi")
-    .replace(/^### (.*$)/gim, "---$1: ")
+    .replace(/^## (.*$)/gim, "<strong>$1: </strong>\n")
+    .replace(/^### (.*$)/gim, "<strong>$1: </strong>\n")
     .replace(/^# (.*$)/gim, "")
     .replace(/^\> (.*$)/gim, "<blockquote>$1</blockquote>")
     .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
