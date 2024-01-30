@@ -1,6 +1,4 @@
 import fetch from "node-fetch";
-const BASE_URL = process.env.BASE_URL || "http://localhost:3000"; // Set BASE_URL in your environment variables
-
 export default async function handler(req, res) {
   try {
     const response = await fetch(
@@ -29,12 +27,9 @@ function simpleMarkdownToHtml(markdown) {
     // Remove commit number patterns
     .replace(/\b[0-9a-f]{7}:\s/gim, "")
     // Headers, blockquotes, and other formatting
-    .replace(
-      /^## (.*$)/gim,
-      "<h2 id='version_$1'><a href='#version_$1'>$1</a></h2>"
-    )
-    .replace(/^### (.*$)/gim, "<h3>$1</h3>")
-    .replace(/^# (.*$)/gim, "<h1>$1</h1>")
+    .replace(/^## (.*$)/gim, "hi")
+    .replace(/^### (.*$)/gim, "---$1: ")
+    .replace(/^# (.*$)/gim, "")
     .replace(/^\> (.*$)/gim, "<blockquote>$1</blockquote>")
     .replace(/\*\*(.*)\*\*/gim, "<strong>$1</strong>")
     .replace(/\*(.*)\*/gim, "<em>$1</em>")
@@ -109,13 +104,13 @@ function createRssFeed(htmlContent, req) {
   itemsMarkdown.forEach((itemMd, index) => {
     const lines = itemMd.split("\n").filter((line) => line.trim() !== "");
     const title = lines[0].replace("## ", "").trim();
-    const description = lines.join("\n").trim();
+    const description = lines.slice(1).join("\n").trim();
 
     rssFeed += "    <item>\n";
-    rssFeed += `      <title>${title}</title>\n`;
+    rssFeed += `      <title>Version ${title}</title>\n`;
     rssFeed += `      <guid>${baseUrl}/api/rss-feed/${index}</guid>\n`; // Example GUID
     rssFeed += "      <description><![CDATA[";
-    rssFeed += description;
+    rssFeed += simpleMarkdownToHtml(description);
     rssFeed += "]]></description>\n";
     rssFeed += "    </item>\n";
   });
