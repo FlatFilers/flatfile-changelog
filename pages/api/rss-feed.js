@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     // const htmlContent = simpleMarkdownToHtml(changelogMd);
 
     // Your logic to create the RSS feed
-    let rssFeed = createRssFeed(changelogMd);
+    let rssFeed = createRssFeed(changelogMd, req);
 
     res.setHeader("Content-Type", "application/rss+xml");
     res.status(200).send(rssFeed);
@@ -84,7 +84,12 @@ function simpleMarkdownToHtml(markdown) {
 }
 
 // Function to create RSS feed from HTML content
-function createRssFeed(htmlContent) {
+function createRssFeed(htmlContent, req) {
+  const { headers } = req; // Get the request headers
+  const protocol = headers["x-forwarded-proto"] || req.protocol || "http"; // Check for forwarded protocol
+  const host = headers.host;
+  const baseUrl = `${protocol}://${host}`;
+
   // Split the content to separate the channel title and items
   const [channelTitleMarkdown, ...itemsMarkdown] = htmlContent.split("\n## ");
   const channelTitle = channelTitleMarkdown
@@ -97,7 +102,7 @@ function createRssFeed(htmlContent) {
   rssFeed += "  <channel>\n";
   rssFeed += `    <title>${channelTitle}</title>\n`;
   rssFeed += `    <link>https://github.com/Flatfilers/flatfile-changelog</link>\n`;
-  rssFeed += `    <atom:link href="${BASE_URL}/api/rss-feed" rel="self" type="application/rss+xml" />\n`; // Self-referencing link
+  rssFeed += `    <atom:link href="${baseUrl}/api/rss-feed" rel="self" type="application/rss+xml" />\n`; // Self-referencing link
   rssFeed += "    <description>Changelog for Flatfile</description>\n";
 
   itemsMarkdown.forEach((itemMd, index) => {
@@ -107,7 +112,7 @@ function createRssFeed(htmlContent) {
 
     rssFeed += "    <item>\n";
     rssFeed += `      <title>${title}</title>\n`;
-    rssFeed += `      <guid>${BASE_URL}/api/rss-feed/${index}</guid>\n`; // Example GUID
+    rssFeed += `      <guid>${baseUrl}/api/rss-feed/${index}</guid>\n`; // Example GUID
     rssFeed += "      <description><![CDATA[";
     rssFeed += description;
     rssFeed += "]]></description>\n";
