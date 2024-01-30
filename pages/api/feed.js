@@ -1,13 +1,20 @@
 import fetch from "node-fetch";
+import { parse, URLSearchParams } from "url"; // Import URLSearchParams to parse query parameters
+
 export default async function handler(req, res) {
   try {
-    const response = await fetch(
-      "https://raw.githubusercontent.com/FlatFilers/flatfile-plugins/main/plugins/autocast/CHANGELOG.md"
-    );
-    const changelogMd = await response.text();
+    const { query } = parse(req.url, true); // Parse query parameters
+    const githubRepo = query.repo; // Get the 'repo' parameter from the query
 
-    // // Process Markdown to HTML (or any required format)
-    // const htmlContent = simpleMarkdownToHtml(changelogMd);
+    if (!githubRepo) {
+      // Check if 'repo' parameter is missing
+      res.status(400).send("Missing 'repo' parameter");
+      return;
+    }
+
+    const githubUrl = `https://raw.githubusercontent.com/Flatfilers/${githubRepo}/CHANGELOG.md`;
+    const response = await fetch(githubUrl);
+    const changelogMd = await response.text();
 
     // Your logic to create the RSS feed
     let rssFeed = createRssFeed(changelogMd, req);
@@ -86,6 +93,9 @@ function createRssFeed(htmlContent, req) {
   const host = headers.host;
   const baseUrl = `${protocol}://${host}`;
 
+  const { query } = parse(req.url, true); // Parse query parameters
+  const githubRepo = query.repo; // Get the 'repo' parameter from the query
+
   // Split the content to separate the channel title and items
   const [channelTitleMarkdown, ...itemsMarkdown] = htmlContent.split("\n## ");
   const channelTitle = channelTitleMarkdown
@@ -98,8 +108,8 @@ function createRssFeed(htmlContent, req) {
   rssFeed += "  <channel>\n";
   rssFeed += `    <title>${channelTitle}</title>\n`;
   rssFeed += `    <link>https://github.com/Flatfilers/flatfile-changelog</link>\n`;
-  rssFeed += `    <atom:link href="${baseUrl}/api/rss-feed" rel="self" type="application/rss+xml" />\n`; // Self-referencing link
-  rssFeed += "    <description>Changelog for Flatfile</description>\n";
+  rssFeed += `    <atom:link href="${baseUrl}/api/feed" rel="self" type="application/rss+xml" />\n`; // Self-referencing link
+  rssFeed += `    <description>Keep track of every change to ${channelTitle}.</description>\n`;
 
   itemsMarkdown.forEach((itemMd, index) => {
     const lines = itemMd.split("\n").filter((line) => line.trim() !== "");
@@ -108,7 +118,7 @@ function createRssFeed(htmlContent, req) {
 
     rssFeed += "    <item>\n";
     rssFeed += `      <title>Version ${title}</title>\n`;
-    rssFeed += `      <guid>${baseUrl}/api/rss-feed/${index}</guid>\n`; // Example GUID
+    rssFeed += `      <guid>${baseUrl}/api/feed/${index}${githubRepo}</guid>\n`; // Example GUID
     rssFeed += "      <description><![CDATA[";
     rssFeed += simpleMarkdownToHtml(description);
     rssFeed += "]]></description>\n";
