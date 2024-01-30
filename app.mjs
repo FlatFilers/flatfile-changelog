@@ -79,21 +79,21 @@ app.get("/rss-feed", async (req, res) => {
       .trim();
 
     let rssFeed = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    rssFeed += '<rss version="2.0">\n';
+    rssFeed += '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n'; // Add Atom namespace
     rssFeed += "  <channel>\n";
     rssFeed += `    <title>${channelTitle}</title>\n`;
-    rssFeed +=
-      "    <link>https://github.com/Flatfilers/flatfile-changelog</link>\n";
+    rssFeed += `    <link>https://github.com/Flatfilers/flatfile-changelog</link>\n`;
+    rssFeed += `    <atom:link href="http://localhost:${port}/rss-feed" rel="self" type="application/rss+xml" />\n`; // Self-referencing link
     rssFeed += "    <description>Changelog for Flatfile</description>\n";
 
-    itemsMarkdown.forEach((itemMd) => {
+    itemsMarkdown.forEach((itemMd, index) => {
       const lines = itemMd.split("\n").filter((line) => line.trim() !== "");
       const title = lines[0].replace("## ", "").trim();
-      // Start the description from the second line to exclude the title
-      const description = lines.slice(1).join("\n").trim();
+      const description = lines.join("\n").trim();
 
       rssFeed += "    <item>\n";
       rssFeed += `      <title>${title}</title>\n`;
+      rssFeed += `      <guid>http://localhost:${port}/rss-feed/${index}</guid>\n`; // Example GUID
       rssFeed += "      <description><![CDATA[";
       rssFeed += description;
       rssFeed += "]]></description>\n";
