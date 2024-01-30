@@ -2,9 +2,6 @@ import fetch from "node-fetch";
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000"; // Set BASE_URL in your environment variables
 
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins (for testing)
-  res.setHeader("Content-Type", "application/rss+xml");
-
   try {
     const response = await fetch(
       "https://raw.githubusercontent.com/FlatFilers/flatfile-plugins/main/plugins/autocast/CHANGELOG.md"
@@ -17,6 +14,7 @@ export default async function handler(req, res) {
     // Your logic to create the RSS feed
     let rssFeed = createRssFeed(changelogMd, req);
 
+    res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins (for testing)
     res.setHeader("Content-Type", "application/rss+xml");
     res.status(200).send(rssFeed);
   } catch (error) {
