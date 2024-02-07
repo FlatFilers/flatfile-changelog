@@ -113,15 +113,20 @@ function createRssFeed(htmlContent, req) {
 
   itemsMarkdown.forEach((itemMd, index) => {
     const lines = itemMd.split("\n").filter((line) => line.trim() !== "");
-    const title = lines[0].replace("## ", "").trim();
-    const description = lines.slice(1).join("\n").trim();
+    const title = lines[0].replace(/^(?<!#)##\s/, "").trim();
+    const dateStr = lines[1].replace(/^(?<!#)####\s/, "").trim();
+    const dateObj = new Date(dateStr);
+    const date = dateObj.toUTCString();
+    const description = lines.slice(2).join("\n").trim();
 
     rssFeed += "    <item>\n";
     rssFeed += `      <title>Version ${title}</title>\n`;
+    rssFeed += `      <pubDate>${date}</pubDate>\n`;
     rssFeed += `      <guid>${baseUrl}/api/feed/${index}${githubRepo}</guid>\n`; // Example GUID
     rssFeed += "      <description><![CDATA[";
+
     rssFeed += simpleMarkdownToHtml(description);
-    rssFeed += "]]></description>\n";
+    rssFeed += `]]></description>\n`;
     rssFeed += "    </item>\n";
   });
 
