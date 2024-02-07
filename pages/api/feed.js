@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { parse, URLSearchParams } from "url"; // Import URLSearchParams to parse query parameters
+import { parse } from "url"; // Import URLSearchParams to parse query parameters
 
 export default async function handler(req, res) {
   try {
@@ -110,6 +110,11 @@ function createRssFeed(htmlContent, req) {
   rssFeed += `    <link>https://github.com/Flatfilers/flatfile-changelog</link>\n`;
   rssFeed += `    <atom:link href="${baseUrl}/api/feed" rel="self" type="application/rss+xml" />\n`; // Self-referencing link
   rssFeed += `    <description>Keep track of every change to ${channelTitle}.</description>\n`;
+  rssFeed += `    <image>`;
+  rssFeed += `      <url>https://mma.prnewswire.com/media/2152240/flatfile_logo_Logo.jpg</url>`;
+  rssFeed += `      <title>${channelTitle}</title>`;
+  rssFeed += `      <link>https://www.flatfile.com</link>`;
+  rssFeed += `    </image>`;
 
   itemsMarkdown.forEach((itemMd, index) => {
     const lines = itemMd.split("\n").filter((line) => line.trim() !== "");
@@ -122,7 +127,8 @@ function createRssFeed(htmlContent, req) {
     rssFeed += "    <item>\n";
     rssFeed += `      <title>Version ${title}</title>\n`;
     rssFeed += `      <pubDate>${date}</pubDate>\n`;
-    rssFeed += `      <guid>${baseUrl}/api/feed/${index}${githubRepo}</guid>\n`; // Example GUID
+    rssFeed += `      <enclosure url="https://mma.prnewswire.com/media/2152240/flatfile_logo_Logo.jpg" type="image/jpeg" />`;
+    rssFeed += `      <guid>${baseUrl}/api/feed/?repo=${githubRepo}</guid>\n`; // Example GUID
     rssFeed += "      <description><![CDATA[";
 
     rssFeed += simpleMarkdownToHtml(description);
