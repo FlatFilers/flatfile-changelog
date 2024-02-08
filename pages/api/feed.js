@@ -95,6 +95,7 @@ function createRssFeed(htmlContent, req) {
 
   const { query } = parse(req.url, true); // Parse query parameters
   const githubRepo = query.repo; // Get the 'repo' parameter from the query
+  const githubRepoLink = githubRepo.replace("/main", "/tree/main");
 
   // Split the content to separate the channel title and items
   const [channelTitleMarkdown, ...itemsMarkdown] = htmlContent.split("\n## ");
@@ -128,7 +129,7 @@ function createRssFeed(htmlContent, req) {
     rssFeed += `      <title>Version ${title}</title>\n`;
     rssFeed += `      <pubDate>${date}</pubDate>\n`;
     rssFeed += `      <enclosure url="https://changelog.flatfile.com/images/flatfile-logo.jpg" type="image/jpeg" />`;
-    rssFeed += `      <link>${baseUrl}/api/feed/?repo=${githubRepo}</link>\n`;
+    rssFeed += `      <link>https://github.com/Flatfilers/${githubRepoLink}</link>\n`;
     rssFeed += `      <guid>${githubRepo}_${title}</guid>\n`;
     rssFeed += "      <description><![CDATA[";
 
