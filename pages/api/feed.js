@@ -128,7 +128,8 @@ function createRssFeed(htmlContent, req) {
     rssFeed += `      <title>Version ${title}</title>\n`;
     rssFeed += `      <pubDate>${date}</pubDate>\n`;
     rssFeed += `      <enclosure url="https://mma.prnewswire.com/media/2152240/flatfile_logo_Logo.jpg" type="image/jpeg" />`;
-    rssFeed += `      <guid>${baseUrl}/api/feed/?repo=${githubRepo}</guid>\n`; // Example GUID
+    rssFeed += `      <link>${baseUrl}/api/feed/?repo=${githubRepo}</link>\n`;
+    rssFeed += `      <guid>${githubRepo}_${title}</guid>\n`;
     rssFeed += "      <description><![CDATA[";
 
     rssFeed += simpleMarkdownToHtml(description);
