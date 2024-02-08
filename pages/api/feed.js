@@ -127,7 +127,7 @@ function createRssFeed(htmlContent, req) {
     rssFeed += "    <item>\n";
     rssFeed += `      <title>Version ${title}</title>\n`;
     rssFeed += `      <pubDate>${date}</pubDate>\n`;
-    rssFeed += `      <enclosure url="https://mma.prnewswire.com/media/2152240/flatfile_logo_Logo.jpg" type="image/jpeg" />`;
+    rssFeed += `      <enclosure url="https://changelog.flatfile.com/images/flatfile-logo.jpg" type="image/jpeg" />`;
     rssFeed += `      <link>${baseUrl}/api/feed/?repo=${githubRepo}</link>\n`;
     rssFeed += `      <guid>${githubRepo}_${title}</guid>\n`;
     rssFeed += "      <description><![CDATA[";
